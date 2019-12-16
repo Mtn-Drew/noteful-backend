@@ -6,26 +6,26 @@ const NotesService = require('./notes-service')
 const notesRouter = express.Router()
 const jsonParser = express.json()
 
-const sanatizeNote = note => ({
+const sanatizeNote = (note) => ({
   id: note.id,
   content: xss(note.content),
-  note_name: xss(note.note_name),
-  date_modified: note.date_modified,
-  folder_id: note.folder_id
+  name: xss(note.name),
+  modified: note.modified,
+  folderId: note.folderId
 })
 
 notesRouter
   .route('/')
   .get((req, res, next) => {
     NotesService.getAllNotes(req.app.get('db'))
-      .then(notes => {
+      .then((notes) => {
         res.json(notes.map(sanatizeNote))
       })
       .catch(next)
   })
   .post(jsonParser, (req, res, next) => {
-    const { content, note_name, folder_id } = req.body
-    const newNote = { content, note_name, folder_id }
+    const { content, name, folderId } = req.body
+    const newNote = { content, name, folderId }
 
     for (const [key, value] of Object.entries(newNote)) {
       if (value == null) {
@@ -35,7 +35,7 @@ notesRouter
       }
     }
     NotesService.insertNote(req.app.get('db'), newNote)
-      .then(note => {
+      .then((note) => {
         res
           .status(201)
           .location(path.posix.join(req.originalUrl, `/${note.id}`))
@@ -48,7 +48,7 @@ notesRouter
   .route('/:note_id')
   .all((req, res, next) => {
     NotesService.getById(req.app.get('db'), req.params.note_id)
-      .then(note => {
+      .then((note) => {
         if (!note) {
           return res.status(404).json({
             error: { message: `Note does not exist` }
@@ -70,19 +70,19 @@ notesRouter
       .catch(next)
   })
   .patch(jsonParser, (req, res, next) => {
-    const { content, note_name, folder_id } = req.body
-    const noteToUpdate = { content, note_name, folder_id }
+    const { content, name, folderId } = req.body
+    const noteToUpdate = { content, name, folderId }
 
     const numberOfValues = Object.values(noteToUpdate).filter(Boolean).length
     if (numberOfValues === 0) {
       return res.status(400).json({
         error: {
-          message: `Request body must containe either 'note_name', 'folder_id' or 'content'`
+          message: `Request body must containe either 'name', 'folderId' or 'content'`
         }
       })
     }
     NotesService.updateNote(req.app.get('db'), req.params.note_id, noteToUpdate)
-      .then(numRowsAffected => {
+      .then((numRowsAffected) => {
         res.status(204).end()
       })
       .catch(next)

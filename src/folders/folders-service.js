@@ -1,37 +1,37 @@
 const FoldersService = {
   getAllFolders(knex) {
     // return knex.select('*').from('folders')
-    return knex.select('*').from('noteful_folders')
+    return knex.select('*').from('folders')
   },
   insertFolder(knex, newFolder) {
     return knex
       .insert(newFolder)
-      .into('noteful_folders')
+      .into('folders')
       .returning('*')
-      .then(rows => {
+      .then((rows) => {
         return rows[0]
       })
   },
   getById(knex, id) {
     return knex
       .select('*')
-      .from('noteful_folders')
+      .from('folders')
       .where('id', id)
       .first()
   },
   deleteFolder(knex, id) {
-    return knex('noteful_folders')
+    return knex('folders')
       .where({ id })
       .delete()
   },
   getNotesByFolder(knex, folderId) {
     return knex
       .select('*')
-      .from('noteful_notes')
-      .where('folder_id', folderId)
+      .from('notes')
+      .where('folderId', folderId)
   },
   updateFolder(knex, id, newName) {
-    return knex('noteful_folders')
+    return knex('folders')
       .where({ id })
       .update(newName)
   }
