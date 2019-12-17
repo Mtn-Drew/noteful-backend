@@ -15,7 +15,7 @@ const sanatizeNote = (note) => ({
   content: xss(note.content),
   name: xss(note.name),
   modified: note.modified,
-  folderId: note.folderId
+  folder_id: note.folder_id
 })
 
 foldersRouter
@@ -45,9 +45,9 @@ foldersRouter
       .catch(next)
   })
 foldersRouter
-  .route('/:folderId')
+  .route('/:folder_id')
   .all((req, res, next) => {
-    FoldersService.getById(req.app.get('db'), req.params.folderId)
+    FoldersService.getById(req.app.get('db'), req.params.folder_id)
       .then((folder) => {
         if (!folder) {
           return res.status(404).json({
@@ -60,14 +60,14 @@ foldersRouter
       .catch(next)
   })
   .get((req, res, next) => {
-    FoldersService.getNotesByFolder(req.app.get('db'), req.params.folderId)
+    FoldersService.getNotesByFolder(req.app.get('db'), req.params.folder_id)
       .then((notes) => {
         res.status(201).json(notes.map(sanatizeNote))
       })
       .catch(next)
   })
   .delete((req, res, next) => {
-    FoldersService.deleteFolder(req.app.get('db'), req.params.folderId)
+    FoldersService.deleteFolder(req.app.get('db'), req.params.folder_id)
       .then(() => {
         res.status(204).end()
       })
@@ -82,7 +82,11 @@ foldersRouter
         error: { message: `Request body must contain name` }
       })
     }
-    FoldersService.updateFolder(req.app.get('db'), req.params.folderId, newName)
+    FoldersService.updateFolder(
+      req.app.get('db'),
+      req.params.folder_id,
+      newName
+    )
       .then((numRowsAffected) => {
         res.status(204).end()
       })

@@ -24,11 +24,11 @@ const FoldersService = {
       .where({ id })
       .delete()
   },
-  getNotesByFolder(knex, folderId) {
+  getNotesByFolder(knex, folder_id) {
     return knex
       .select('*')
       .from('notes')
-      .where('folderId', folderId)
+      .where('folder_id', folder_id)
   },
   updateFolder(knex, id, newName) {
     return knex('folders')

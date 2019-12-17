@@ -4,5 +4,5 @@ CREATE TABLE notes (
     content TEXT,
     modified TIMESTAMP DEFAULT now() NOT NULL,
     PRIMARY KEY (id),
-    folderId uuid REFERENCES folders(id) ON DELETE CASCADE NOT NULL
+    folder_id uuid REFERENCES folders(id) ON DELETE CASCADE NOT NULL
 )

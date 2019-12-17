@@ -11,7 +11,7 @@ const sanatizeNote = (note) => ({
   content: xss(note.content),
   name: xss(note.name),
   modified: note.modified,
-  folderId: note.folderId
+  folder_id: note.folder_id
 })
 
 notesRouter
@@ -24,8 +24,8 @@ notesRouter
       .catch(next)
   })
   .post(jsonParser, (req, res, next) => {
-    const { content, name, folderId } = req.body
-    const newNote = { content, name, folderId }
+    const { content, name, folder_id } = req.body
+    const newNote = { content, name, folder_id }
 
     for (const [key, value] of Object.entries(newNote)) {
       if (value == null) {
@@ -70,14 +70,14 @@ notesRouter
       .catch(next)
   })
   .patch(jsonParser, (req, res, next) => {
-    const { content, name, folderId } = req.body
-    const noteToUpdate = { content, name, folderId }
+    const { content, name, folder_id } = req.body
+    const noteToUpdate = { content, name, folder_id }
 
     const numberOfValues = Object.values(noteToUpdate).filter(Boolean).length
     if (numberOfValues === 0) {
       return res.status(400).json({
         error: {
-          message: `Request body must containe either 'name', 'folderId' or 'content'`
+          message: `Request body must containe either 'name', 'folder_id' or 'content'`
         }
       })
     }
